@@ -1,5 +1,6 @@
 package Controller;
 
+import java.io.IOException;
 import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -36,6 +37,7 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTreeCell;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
@@ -254,7 +256,13 @@ public class HomeController  implements Initializable {
         	ContextMenu menu = new ContextMenu();
         	MenuItem add = new MenuItem("Add");
         	add.setOnAction(e->{
-        		
+        		try {
+        			System.out.println("Test");
+        			initCompanyView(false);
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
         	});
         	MenuItem refresh = new MenuItem("Refresh");
         	add.setOnAction(e->{
@@ -268,7 +276,12 @@ public class HomeController  implements Initializable {
         	ContextMenu menu = new ContextMenu();
         	MenuItem add = new MenuItem("Add");
         	add.setOnAction(e->{
-        		
+        		try {
+        			initCustomerView(false);
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
         	});
         	MenuItem edit = new MenuItem("Edit");
         	edit.setOnAction(e->{
@@ -311,6 +324,34 @@ public class HomeController  implements Initializable {
         	});
         	menu.getItems().addAll(add,del);
         	this.subChildContextMenu = menu;
+        }
+        
+        private void initCompanyView(boolean isEdit) throws IOException {
+        	Stage window = new Stage();
+    		FXMLLoader loader = new FXMLLoader(getClass().getResource("/View/AddEditCompanyView.fxml"));
+    		Parent root = (Parent) loader.load();
+    		System.out.println("1");
+    		window.setTitle(isEdit ? "Edit Company" : "Add Company");
+    		window.initModality(Modality.APPLICATION_MODAL);
+    		Scene scene = new Scene(root);
+    		window.setScene(scene);
+    		System.out.println("2");
+    		window.showAndWait();
+        }
+        
+        private void initCustomerView(boolean isEdit) throws IOException {
+        	Stage window = new Stage();
+    		FXMLLoader loader = new FXMLLoader(getClass().getResource("/View/AddEditCustomerView.fxml"));
+    		Parent root = (Parent) loader.load();
+    		window.setTitle(isEdit ? "Edit Customer" : "Add Customer");
+    		window.initModality(Modality.APPLICATION_MODAL);
+    		Scene scene = new Scene(root);
+    		window.setScene(scene);
+    		window.showAndWait();
+        }
+        
+        private void initBillView(boolean isEdit) {
+        	
         }
         
         @Override
