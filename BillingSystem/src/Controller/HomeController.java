@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import com.sun.org.apache.xalan.internal.xsltc.dom.LoadDocument;
+
 import Common.Common;
 import Common.DBHelper;
 import Model.Customer;
@@ -274,8 +276,8 @@ public class HomeController  implements Initializable {
         
         private void initParentContextMenu() {
         	ContextMenu menu = new ContextMenu();
-        	MenuItem add = new MenuItem("Add");
-        	add.setOnAction(e->{
+        	MenuItem add1 = new MenuItem("Add");
+        	add1.setOnAction(e->{
         		try {
         			initCustomerView(false);
 				} catch (IOException e1) {
@@ -285,42 +287,91 @@ public class HomeController  implements Initializable {
         	});
         	MenuItem edit = new MenuItem("Edit");
         	edit.setOnAction(e->{
-        		
+        		try {
+        			initCompanyView(true);
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
         	});
         	MenuItem del = new MenuItem("Delete");
         	del.setOnAction(e->{
-        		
+        		deleteCompany();
+        		reloadTreeView();
         	});
-        	menu.getItems().addAll(add,edit,del);
+        	menu.getItems().addAll(add1,edit,del);
         	this.parentContextMenu = menu;
         }
         private void initChildContextMenu(){
         	ContextMenu menu = new ContextMenu();
         	MenuItem add = new MenuItem("Add");
         	add.setOnAction(e->{
-        		
+        		try {
+        			initBillView(false);
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
         	});
         	MenuItem edit = new MenuItem("Edit");
         	edit.setOnAction(e->{
-        		
+        		try {
+        			initCustomerView(true);
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
         	});
         	MenuItem del = new MenuItem("Delete");
         	del.setOnAction(e->{
-        		
+        		deleteCustomer();
+        		reloadTreeView();
         	});
         	menu.getItems().addAll(add,edit,del);
         	this.childContextMenu = menu;
+        }
+        
+        private void deleteCompany() {
+        	Company comp = getCompany();
+        	for (Bill bill : getBillDataByQuery("select * from adesai35_customer_bill where bill_company_id = "+comp.getId())) {
+        		dh.executeUpdate("Delete from adesai35_customer_bill_items where bill_id = " + bill.getId());
+			}
+        	
+        	dh.executeUpdate("Delete from adesai35_customer_bill where bill_company_id = "+comp.getId());
+        	dh.executeUpdate("Delete from adesai35_customer where company_id = "+comp.getId());
+        	dh.executeUpdate("Delete from adesai35_company where comp_id = "+comp.getId());
+        }
+        
+        private void deleteCustomer() {
+        	Customer cust = getCustomer();
+        	for (Bill bill : getBillDataByQuery("select * from adesai35_customer_bill where bill_customer_id = "+cust.getId())) {
+        		dh.executeUpdate("Delete from adesai35_customer_bill_items where bill_id = " + bill.getId());
+			}
+        	
+        	dh.executeUpdate("Delete from adesai35_customer_bill where bill_customer_id = "+cust.getId());
+        	dh.executeUpdate("Delete from adesai35_customer where cust_id = "+cust.getId());
+        }
+        
+        private void deleteBill() {
+        	dh.executeQuery("Delete from adesai35_customer_bill_items where bill_id = "+getTreeItem().getValue());
+        	dh.executeUpdate("Delete from adesai35_customer_bill where bill_id = "+getTreeItem().getValue());
         }
         
         private void initSubChidContextMenu() {
         	ContextMenu menu = new ContextMenu();
         	MenuItem add = new MenuItem("Edit");
         	add.setOnAction(e->{
-        		
+        		try {
+        			initBillView(true);
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
         	});
         	MenuItem del = new MenuItem("Delete");
         	del.setOnAction(e->{
-        		
+        		deleteBill();
+        		reloadTreeView();
         	});
         	menu.getItems().addAll(add,del);
         	this.subChildContextMenu = menu;
@@ -329,6 +380,11 @@ public class HomeController  implements Initializable {
         private void initCompanyView(boolean isEdit) throws IOException {
         	Stage window = new Stage();
     		FXMLLoader loader = new FXMLLoader(getClass().getResource("/View/AddEditCompanyView.fxml"));
+    		if(isEdit) {
+    		AddEditCompanyController controller = loader.getController();
+    		Company comp =  getCompany();
+    		//if(comp!=null)controller.initData(comp);
+    		}
     		Parent root = (Parent) loader.load();
     		System.out.println("1");
     		window.setTitle(isEdit ? "Edit Company" : "Add Company");
@@ -337,6 +393,36 @@ public class HomeController  implements Initializable {
     		window.setScene(scene);
     		System.out.println("2");
     		window.showAndWait();
+        }
+        
+        private Company getCompany() {
+        	Company result = null;
+        	List<Company> list = getCompanyDataByQuery("select * from adesai35_company where comp_name = '"+getTreeItem().getValue()+"'");
+        	
+        	if(list.size() == 1) {
+        		result = list.get(0);
+        	}
+        	return result;
+        }
+        
+        private Customer getCustomer() {
+        	Customer result = null;
+        	List<Customer> list = getCustomerDataByQuery("select * from adesai35_customer where cust_name = '"+getTreeItem().getValue()+"'");
+        	
+        	if(list.size() == 1) {
+        		result = list.get(0);
+        	}
+        	return result;
+        }
+        
+        private Bill getBill() {
+        	Bill result = null;
+        	List<Bill> list = getBillDataByQuery("select * from adesai35_customer_bill where bill_id = "+getTreeItem().getValue());
+        	
+        	if(list.size() == 1) {
+        		result = list.get(0);
+        	}
+        	return result;
         }
         
         private void initCustomerView(boolean isEdit) throws IOException {
@@ -350,8 +436,15 @@ public class HomeController  implements Initializable {
     		window.showAndWait();
         }
         
-        private void initBillView(boolean isEdit) {
-        	
+        private void initBillView(boolean isEdit) throws IOException {
+        	Stage window = new Stage();
+    		FXMLLoader loader = new FXMLLoader(getClass().getResource("/View/CustomerBillView.fxml"));
+    		Parent root = (Parent) loader.load();
+    		window.setTitle(isEdit ? "Edit Bill" : "Add Bill");
+    		window.initModality(Modality.APPLICATION_MODAL);
+    		Scene scene = new Scene(root);
+    		window.setScene(scene);
+    		window.showAndWait();
         }
         
         @Override
