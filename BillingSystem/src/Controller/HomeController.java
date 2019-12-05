@@ -60,14 +60,19 @@ public class HomeController  implements Initializable {
     private DBHelper dh = new DBHelper();
     private TableView historytable;
     private ObservableList historydata;
+    private TableView companytable;
+    private ObservableList companydata;
+    private TableView customertable;
+    private ObservableList customerdata;
     
     @Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
-    	initCategoryTab();
-    	initHistoryTab();
+    	initCategoryTab(null);
+    	initHistoryTab(null);
     }
     
-    private void initCategoryTab() {
+    @FXML
+    private void initCategoryTab(ActionEvent event) {
     	if(this.tabLeftPane.getTabs().size() > 0) reloadTreeView();
     	else {
     		Tab category = new Tab("Category");
@@ -77,7 +82,32 @@ public class HomeController  implements Initializable {
     	}
     }
     
-    private void initHistoryTab() {
+    @FXML
+    void isCloseClick(ActionEvent event) {
+    	System.exit(0);
+    }
+    
+    @FXML
+    void about(ActionEvent event) {
+    	com.NotificationBox("About", "Welcome to Billing System 1.0.0.0");
+    }
+    
+    @FXML
+    void addCompany(ActionEvent event) throws IOException {
+    	Stage window = new Stage();
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("/View/AddEditCompanyView.fxml"));
+		Parent root = (Parent) loader.load();
+		System.out.println("1");
+		window.setTitle("Add Company");
+		window.initModality(Modality.APPLICATION_MODAL);
+		Scene scene = new Scene(root);
+		window.setScene(scene);
+		System.out.println("2");
+		window.showAndWait();
+    }
+    
+    @FXML
+    private void initHistoryTab(ActionEvent event) {
     	if(this.tabBottonPane.getTabs().size() > 0) this.historytable.setItems(getInitialHistoryTableData());
     	else {
     		Tab history = new Tab("History");
@@ -97,12 +127,66 @@ public class HomeController  implements Initializable {
     	}
     }
     
-    private void initCompanyTab() {
-    	
+    @FXML
+    private void initCompanyTab(ActionEvent event) {
+    		Tab company = new Tab("Company List");
+    		companytable = new TableView();
+    		companydata = getInitialCompanyTableData();
+    		companytable.setItems(companydata);
+    		
+    		TableColumn nameCol = new TableColumn("Name");
+    		nameCol.setCellValueFactory(new PropertyValueFactory("name"));
+            TableColumn mCol = new TableColumn("Mobile No");
+            mCol.setCellValueFactory(new PropertyValueFactory("mo_no"));
+            TableColumn pCol = new TableColumn("Phone No");
+            pCol.setCellValueFactory(new PropertyValueFactory("phone_no"));
+            TableColumn eCol = new TableColumn("Email");
+            eCol.setCellValueFactory(new PropertyValueFactory("email"));
+            TableColumn aCol = new TableColumn("Address");
+            aCol.setCellValueFactory(new PropertyValueFactory("address"));
+            TableColumn desCol = new TableColumn("Description");
+            desCol.setCellValueFactory(new PropertyValueFactory("desc"));
+     
+            companytable.getColumns().setAll(nameCol, mCol, pCol, eCol, aCol,desCol);
+    		
+            company.setContent(this.companytable);
+    		this.tabCentalPane.getTabs().add(company);
     }
     
-    private void initCustomerTab() {
-    	
+    @FXML
+    private void initCustomerTab(ActionEvent event) {
+    	Tab customer = new Tab("Customer List");
+		customertable = new TableView();
+		customerdata = getInitialCustomerTableData();
+		customertable.setItems(customerdata);
+		
+		TableColumn nameCol = new TableColumn("Name");
+		nameCol.setCellValueFactory(new PropertyValueFactory("name"));
+        TableColumn mCol = new TableColumn("Mobile No");
+        mCol.setCellValueFactory(new PropertyValueFactory("mo_no"));
+        TableColumn pCol = new TableColumn("Phone No");
+        pCol.setCellValueFactory(new PropertyValueFactory("phone_no"));
+        TableColumn eCol = new TableColumn("Email");
+        eCol.setCellValueFactory(new PropertyValueFactory("email"));
+        TableColumn aCol = new TableColumn("Address");
+        aCol.setCellValueFactory(new PropertyValueFactory("address"));
+        TableColumn desCol = new TableColumn("Description");
+        desCol.setCellValueFactory(new PropertyValueFactory("desc"));
+ 
+        customertable.getColumns().setAll(nameCol, mCol, pCol, eCol, aCol,desCol);
+		
+        customer.setContent(this.customertable);
+		this.tabCentalPane.getTabs().add(customer);
+    }
+    
+    private ObservableList getInitialCustomerTableData() {
+    	List<Customer> listCustomer = getCustomerDataByQuery("select * from adesai35_customer");
+    	return FXCollections.observableList(listCustomer);
+    }
+    
+    private ObservableList getInitialCompanyTableData() {
+    	List<Company> listCompany = getCompanyDataByQuery("select * from adesai35_company");
+    	return FXCollections.observableList(listCompany);
     }
     
     private ObservableList getInitialHistoryTableData() {

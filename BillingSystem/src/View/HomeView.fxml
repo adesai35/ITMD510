@@ -12,21 +12,21 @@
         <menus>
           <Menu mnemonicParsing="false" text="File">
             <items>
-                  <MenuItem mnemonicParsing="false" text="Add Company" />
-              <MenuItem mnemonicParsing="false" text="Close" />
+                  <MenuItem mnemonicParsing="false" onAction="#addCompany" text="Add Company" />
+              <MenuItem mnemonicParsing="false" onAction="#isCloseClick" text="Close" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="View">
             <items>
-              <MenuItem mnemonicParsing="false" text="Category" />
-                  <MenuItem mnemonicParsing="false" text="Company List" />
-                  <MenuItem mnemonicParsing="false" text="Customer List" />
-                  <MenuItem mnemonicParsing="false" text="History" />
+              <MenuItem mnemonicParsing="false" onAction="#initCategoryTab" text="Category" />
+                  <MenuItem mnemonicParsing="false" onAction="#initCompanyTab" text="Company List" />
+                  <MenuItem mnemonicParsing="false" onAction="#initCustomerTab" text="Customer List" />
+                  <MenuItem mnemonicParsing="false" onAction="#initHistoryTab" text="History" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Help">
             <items>
-              <MenuItem mnemonicParsing="false" text="About" />
+              <MenuItem mnemonicParsing="false" onAction="#about" text="About" />
             </items>
           </Menu>
         </menus>
