@@ -6,8 +6,7 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.BorderPane?>
 
-
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="531.0" prefWidth="729.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="531.0" prefWidth="729.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.HomeController">
    <top>
       <MenuBar BorderPane.alignment="CENTER">
         <menus>
@@ -34,12 +33,12 @@
       </MenuBar>
    </top>
    <left>
-      <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER" />
+      <TabPane fx:id="tabLeftPane" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER" />
    </left>
    <center>
-      <TabPane prefHeight="252.0" prefWidth="431.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER" />
+      <TabPane fx:id="tabCentalPane" prefHeight="252.0" prefWidth="431.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER" />
    </center>
    <bottom>
-      <TabPane prefHeight="122.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER" />
+      <TabPane fx:id="tabBottonPane" prefHeight="190.0" prefWidth="730.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER" />
    </bottom>
 </BorderPane>
